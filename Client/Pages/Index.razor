@@ -16,8 +16,8 @@
 
 <div class="container">
     <div class="app">
-        <h1 class="app-title">🎬 MovieSearch</h1>
-
+      
+        <img src="Header.png" style="width:65%; display:block; margin-left:auto; margin-right:auto;" />
         <div class="search-bar">
             <input @bind="searchTitle" placeholder="Enter movie title" />
             <button @onclick="Search">Search</button>
@@ -26,7 +26,8 @@
         <div class="recent-searches">
             @if (latestQueries?.Count > 0) {
                 <span class="label">Recent searches:</span>
-                <ul>
+               
+                    <ul style="padding:0;">
                     @foreach (var q in latestQueries) {
                         <button @onclick="Search" class="chip">@q</button>
                     }
@@ -34,17 +35,14 @@
             }
         </div>
 
-        @if (searchResult?.Search != null) {
-            <h2 class="section-title">Search Results</h2>
+        @if (searchResult?.Search != null) {          
             @foreach (var movie in searchResult.Search) {
                 <a @onclick="() => { ShowDetails(movie.imdbID); }">   
-                    <div class="movie-card">
-                        <div class="poster-placeholder">🎬</div>
+                    <div class="movie-card">                        
                         <div class="movie-info">
                             <h3>@movie.Title</h3>
                             <p>@movie.Year</p>
-                             <p>@movie.Type</p> 
-                            <p>@movie.imdbID</p>
+                            <p>@movie.Type</p>                          
                         </div>
                     </div>
                 </a>
@@ -64,7 +62,7 @@
                 <h4>@selectedMovie.Title</h4>
                 <img src="@selectedMovie.Poster" alt="Poster" />
                 <p>@selectedMovie.Plot</p>
-                <p>IMDB: @selectedMovie.imdbRating</p>
+                <p>IMDB: <b> @selectedMovie.imdbRating</b></p>
             </div>
         </div>
     </div>
