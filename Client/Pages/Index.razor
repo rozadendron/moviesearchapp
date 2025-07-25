@@ -1,0 +1,113 @@
+﻿@page "/"
+@using MovieSearchApp.Client.Models
+@using MovieSearchApp.Client.Services
+@inject MovieService MovieService
+@inject IJSRuntime JSRuntime
+
+<script>
+    function openModal() {
+        document.getElementById("movieModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("movieModal").style.display = "none";
+    }
+</script>
+
+<div class="container">
+    <div class="app">
+        <h1 class="app-title">🎬 MovieSearch</h1>
+
+        <div class="search-bar">
+            <input @bind="searchTitle" placeholder="Enter movie title" />
+            <button @onclick="Search">Search</button>
+        </div>
+
+        <div class="recent-searches">
+            @if (latestQueries?.Count > 0) {
+                <span class="label">Recent searches:</span>
+                <ul>
+                    @foreach (var q in latestQueries) {
+                        <button @onclick="Search" class="chip">@q</button>
+                    }
+                </ul>
+            }
+        </div>
+
+        @if (searchResult?.Search != null) {
+            <h2 class="section-title">Search Results</h2>
+            @foreach (var movie in searchResult.Search) {
+                <a @onclick="() => { ShowDetails(movie.imdbID); }">   
+                    <div class="movie-card">
+                        <div class="poster-placeholder">🎬</div>
+                        <div class="movie-info">
+                            <h3>@movie.Title</h3>
+                            <p>@movie.Year</p>
+                             <p>@movie.Type</p> 
+                            <p>@movie.imdbID</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        }
+    </div>
+</div>
+
+@if (showModal && selectedMovie != null)
+{
+    <div class="modal" id="movieModal" style="display:flex; width:50%">
+        <div class="modal-content">
+            <div style="width:50px">
+            <span class="close-button" @onclick="CloseModal">Close window</span>
+            </div>
+            <div>                     
+                <h4>@selectedMovie.Title</h4>
+                <img src="@selectedMovie.Poster" alt="Poster" />
+                <p>@selectedMovie.Plot</p>
+                <p>IMDB: @selectedMovie.imdbRating</p>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="spinner" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:2rem; border-radius:1rem; display:flex; flex-direction:column; align-items:center;">
+        <div class="spinner" style="width:48px; height:48px; border:6px solid #ccc; border-top:6px solid #333; border-radius:50%; animation:spin 1s linear infinite;"></div>
+        <span style="margin-top:1rem;">Loading movie details...</span>
+    </div>
+</div>
+
+@code {
+    string searchTitle;
+    OmdbSearchResult searchResult;
+    List<string> latestQueries;
+    OmdbMovieDetails selectedMovie;
+    bool showModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        latestQueries = await MovieService.GetLatestQueriesAsync();
+    }
+
+    async Task Search()
+    {
+        searchResult = await MovieService.SearchAsync(searchTitle);
+        latestQueries = await MovieService.GetLatestQueriesAsync();
+        selectedMovie = null;
+        showModal = false;
+    }
+      
+    async Task ShowDetails(string imdbId)
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('spinner').style.display = 'flex';");
+        selectedMovie = await MovieService.GetDetailsAsync(imdbId);
+        await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('spinner').style.display = 'none';");
+        showModal = true;
+        StateHasChanged();
+    }
+
+    void CloseModal()
+    {
+        showModal = false;
+    }
+}
