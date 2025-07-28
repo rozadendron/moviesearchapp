@@ -12,6 +12,7 @@ namespace MovieSearchApp.Server.Controllers
         private static readonly List<string> _latestQueries = new();
         private readonly IHttpClientFactory _httpClientFactory;
         private const string OmdbApiKey = "5bb25fab";
+        private const string OmdbSearchUrlTemplate = "https://www.omdbapi.com/?apikey=";
 
         public MoviesController(IHttpClientFactory httpClientFactory)
         {
@@ -32,7 +33,7 @@ namespace MovieSearchApp.Server.Controllers
             }
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"http://www.omdbapi.com/?apikey={OmdbApiKey}&s={title}");
+            var response = await client.GetAsync($"{OmdbSearchUrlTemplate}{OmdbApiKey}&s={title}");
             var content = await response.Content.ReadAsStringAsync();
             return Content(content, "application/json");
         }
@@ -50,7 +51,7 @@ namespace MovieSearchApp.Server.Controllers
                 return BadRequest("imdbId is required.");
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"http://www.omdbapi.com/?apikey={OmdbApiKey}&i={imdbId}&plot=full");
+            var response = await client.GetAsync($"{OmdbSearchUrlTemplate}{OmdbApiKey}&i={imdbId}&plot=full");
             var content = await response.Content.ReadAsStringAsync();
             return Content(content, "application/json");
         }
