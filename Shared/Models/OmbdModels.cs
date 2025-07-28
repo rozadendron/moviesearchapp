@@ -1,4 +1,4 @@
-﻿namespace MovieSearchApp.Client.Models
+﻿namespace MovieSearchApp.Shared
 {
     public class OmdbSearchResult
     {
@@ -20,6 +20,6 @@
     {
         public string Plot { get; set; }
         public string imdbRating { get; set; }
-        // Add other fields as needed
+       
     }       
 }

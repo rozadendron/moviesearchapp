@@ -1,4 +1,4 @@
-﻿using MovieSearchApp.Client.Models;
+﻿using MovieSearchApp.Shared;
 using System.Net.Http.Json;
 namespace MovieSearchApp.Client.Services
 {

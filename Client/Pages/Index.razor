@@ -1,6 +1,6 @@
 ﻿@page "/"
-@using MovieSearchApp.Client.Models
 @using MovieSearchApp.Client.Services
+@using MovieSearchApp.Shared
 @inject MovieService MovieService
 @inject IJSRuntime JSRuntime
 
@@ -16,7 +16,7 @@
 
 <div class="container">
     <div class="app">
-      
+
         <img src="Header.png" style="width:65%; display:block; margin-left:auto; margin-right:auto;" />
         <div class="search-bar">
             <input @bind="searchTitle" placeholder="Enter movie title" />
@@ -26,23 +26,24 @@
         <div class="recent-searches">
             @if (latestQueries?.Count > 0) {
                 <span class="label">Recent searches:</span>
-               
-                    <ul style="padding:0;">
+
+                <ul style="padding:0;">
                     @foreach (var q in latestQueries) {
-                        <button @onclick="Search" class="chip">@q</button>
+                        <button @onclick="() => OnRecentSearchClicked(q)" class="chip">@q</button>
+
                     }
                 </ul>
             }
         </div>
 
-        @if (searchResult?.Search != null) {          
+        @if (searchResult?.Search != null && searchResult.Search.Count > 0) {
             @foreach (var movie in searchResult.Search) {
-                <a @onclick="() => { ShowDetails(movie.imdbID); }">   
-                    <div class="movie-card">                        
+                <a @onclick="() => { ShowDetails(movie.imdbID); }">
+                    <div class="movie-card">
                         <div class="movie-info">
                             <h3>@movie.Title</h3>
                             <p>@movie.Year</p>
-                            <p>@movie.Type</p>                          
+                            <p>@movie.Type</p>
                         </div>
                     </div>
                 </a>
@@ -51,14 +52,13 @@
     </div>
 </div>
 
-@if (showModal && selectedMovie != null)
-{
+@if (showModal && selectedMovie != null) {
     <div class="modal" id="movieModal" style="display:flex; width:50%">
         <div class="modal-content">
             <div style="width:50px">
-            <span class="close-button" @onclick="CloseModal">Close window</span>
+                <span class="close-button" @onclick="CloseModal">Close window</span>
             </div>
-            <div>                     
+            <div>
                 <h4>@selectedMovie.Title</h4>
                 <img src="@selectedMovie.Poster" alt="Poster" />
                 <p>@selectedMovie.Plot</p>
@@ -94,7 +94,7 @@
         selectedMovie = null;
         showModal = false;
     }
-      
+
     async Task ShowDetails(string imdbId)
     {
         await JSRuntime.InvokeVoidAsync("eval", "document.getElementById('spinner').style.display = 'flex';");
@@ -107,5 +107,11 @@
     void CloseModal()
     {
         showModal = false;
+    }
+
+    void OnRecentSearchClicked(string query)
+    {
+        searchTitle = query;
+
     }
 }

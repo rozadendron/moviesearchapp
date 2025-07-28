@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace MovieSearchApp.Server.Controllers
 {
