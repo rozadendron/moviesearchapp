@@ -1,12 +1,6 @@
-using Xunit;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using MovieSearchApp.Server.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 public class MoviesControllerTests
 {

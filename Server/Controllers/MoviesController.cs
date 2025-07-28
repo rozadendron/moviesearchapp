@@ -37,7 +37,7 @@ namespace MovieSearchApp.Server.Controllers
             return Content(content, "application/json");
         }
 
-        [HttpGet("latest")]
+        [HttpGet("Latest")]
         public IActionResult Latest()
         {
             return Ok(_latestQueries);
